@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Telegram Authentication</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Open Sans", sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #636b6f;
+      /*background: url('/widgets/submit-bg.jpg') no-repeat;*/
+      /*background-size: cover;*/
+    }
+
+    .login__buttons {
+      padding: 0 10px;
+      display: -moz-flex;
+      display: -ms-flex;
+      display: -o-flex;
+      display: -webkit-box;
+      display: flex
+    }
+
+    .btn {
+      display: inline-block;
+      margin-bottom: 0;
+      font-weight: 400;
+      text-align: center;
+      vertical-align: middle;
+      touch-action: manipulation;
+      cursor: pointer;
+      border: 1px solid transparent;
+      white-space: nowrap;
+      padding: 6px 12px;
+      font-size: 14px;
+      line-height: 1.6;
+      border-radius: 4px;
+      text-decoration: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none
+    }
+
+    .btn-info {
+      color: #fff;
+      background-color: #5178A3;
+      border-color: #496b92
+    }
+
+    .btn-info.focus, .btn-info:focus {
+      color: #fff;
+      background-color: #405f81;
+      border-color: #1e2d3d
+    }
+
+    .btn-info.active, .btn-info:active, .btn-info:hover, .open > .btn-info.dropdown-toggle {
+      color: #fff;
+      background-color: #405f81;
+      border-color: #344d69
+    }
+
+    .btn-info.active.focus, .btn-info.active:focus, .btn-info.active:hover, .btn-info:active.focus, .btn-info:active:focus, .btn-info:active:hover, .open > .btn-info.dropdown-toggle.focus, .open > .btn-info.dropdown-toggle:focus, .open > .btn-info.dropdown-toggle:hover {
+      color: #fff;
+      background-color: #344d69;
+      border-color: #1e2d3d
+    }
+
+    .btn--authorize {
+      display: block;
+      width: 100%;
+      padding-left: 64px;
+      font-weight: 600
+    }
+
+    .btn--qr {
+      -webkit-box-flex: 0;
+      flex: 0 0 48px
+    }
+
+    .login__alternate {
+      margin-top: 5px;
+      border-top: 1px solid #D3E0E9;
+      padding-top: 20px
+    }
+
+    .login__help {
+      font-size: 16px
+    }
+
+    .login__commandbox {
+      display: block;
+      font-weight: 500;
+      width: 100%;
+      font-size: 24px;
+      background: #EEE;
+      border: none;
+      text-align: center;
+      color: #333;
+      padding: 10px 0;
+      margin-bottom: -10px;
+      font-family: 'Roboto Mono', 'Ubuntu Mono', monospace;
+      cursor: pointer;
+      appearance: none;
+      -moz-appearance: none;
+      -webkit-appearance: none
+    }
+
+    .login__commandbox:active, .login__commandbox:focus {
+      border: none;
+      outline: 0
+    }
+
+    .login__commandbox::-moz-selection {
+      color: #fff;
+      background: #3097D1
+    }
+
+    .login__commandbox::selection {
+      color: #fff;
+      background: #3097D1
+    }
+
+    .panel {
+      padding: 2em 1em;
+    }
+
+    .bot__link {
+      color: #3097D1;
+      text-decoration: none;
+    }
+
+    .bot__link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+<div>
+  <div class="panel">
+    Authentication
+  </div>
+  <div class="main">
+    <div class="btn-group login__buttons" role="group">
+      <a id="bot__command" href="" class="btn btn-info btn-lg btn--authorize">
+        Open in Telegram
+      </a>
+    </div>
+    <div style="text-align: center">
+      ...and press START
+    </div>
+  </div>
+  <div class="panel">
+    <div class="login__alternate">
+      <p class="login__help">Or send this message to <a id="bot__id" class="bot__link" href="">@</a>:</p>
+    </div>
+    <input id="bot__commandbox" class="login__commandbox" readonly onclick="this.select()" value="">
+  </div>
+</div>
+
+<script type="text/javascript">
+
+  const baseUrl = new URL(document.URL);
+  const bot = baseUrl.searchParams.get('bot') || '';
+  const code = baseUrl.searchParams.get('start') || '';
+  const botUrl = "tg:\/\/resolve?domain=" + bot;
+  const protoUrl = botUrl + ( code ? "&start=" + code : '');
+  let count = 0;
+
+  window.onerror = function (messageOrEvent, source, lineno, colno, error) {
+    var payload = {
+      messageOrEvent,
+      source,
+      lineno,
+      colno,
+      error: {
+        message: error.message,
+        stack: error.stack
+      }
+    };
+
+    fetch('/api/integration/error/report',
+      {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        method: 'POST',
+        body: JSON.stringify({ details: payload })
+      }).then(() => {
+      alert(error.message + ' (reported)');
+    }).catch(err => {
+      throw err;
+    });
+  };
+
+  //  throw new Error('test')
+
+  document.getElementById('bot__id').textContent = '@' + bot;
+  document.getElementById('bot__id').href = botUrl;
+  document.getElementById('bot__command').href = protoUrl;
+  document.getElementById('bot__commandbox').value = '/start' + ( code ? ' ' + code : '');
+
+  var iframeEl = document.createElement('iframe');
+  document.body.appendChild(iframeEl);
+  var pageHidden = false;
+  window.addEventListener('pagehide', function () {
+    pageHidden = true;
+  }, false);
+  window.addEventListener('blur', function () {
+    pageHidden = true;
+  }, false);
+  if (iframeEl !== null) {
+    iframeEl.src = protoUrl;
+  }
+
+  setTimeout(function() {
+    if (!pageHidden) {
+      alert('failed')
+      //window.location = protoUrl;
+    }
+    else {
+//      alert('success');
+    }
+  }, 2000);
+
+//  setTimeout(function () {
+//    window.location = protoUrl;
+//  }, 100);
+
+  function heartbeat() {
+    count++;
+    if (count > 120) {
+      alert('Timeout. Please refresh this page and start over');
+      return;
+    }
+
+    fetch('/api/integration/telegram/auth/status?code=' + code,
+      {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        method: 'GET'
+      }).then((res) => {
+      if (res.ok) {
+        return res.json().then(response => {
+          if (response.ok) {
+//            console.log('success')
+             window.location = '/api/integration/telegram/auth/callback?code=' + code;
+          }
+          else {
+            setTimeout(heartbeat, 2000);
+          }
+        });
+      }
+      else {
+        setTimeout(heartbeat, 2000);
+      }
+    }).catch(err => {
+      console.log('fetch status error', err);
+      setTimeout(heartbeat, 2000);
+    })
+  }
+  setTimeout(heartbeat, 5000);
+
+
+</script>
+
+
+</body>
+</html>

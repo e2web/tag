@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Timesheet</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: url('/widgets/submit-bg.jpg') no-repeat;
+      background-size: cover;
+    }
+    .map {
+      padding: 0;
+      margin: 0;
+    }
+    .map img {
+      display: block;
+      padding: 0;
+      margin: 0;
+    }
+    .hide {
+      display: none;
+    }
+    .highlight {
+      color: #21b6ae
+    }
+  </style>
+</head>
+<body>
+
+<table border="0" align="center" cellpadding="0" cellspacing="0">
+  <tbody>
+  <tr>
+    <td height="30">
+    </td>
+  </tr>
+
+  <!-- logo -->
+  <tr>
+    <td align="center" style="line-height: 0px;">
+      <img src="https://s3-ap-southeast-1.amazonaws.com/jsonsdk/imgs/logo-hozential.png" alt="logo" width="180"
+           style="display:block; line-height:0px; font-size:0px; border:0px;" data-crop="false">
+    </td>
+  </tr>
+  <!-- end logo -->
+
+  <tr>
+    <td height="30">
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="600">
+      <table align="center" bgcolor="#FFFFFF" style="border-radius:4px; box-shadow: 0px -3px 0px #D4D2D2;" width="95%"
+             border="0" cellspacing="0" cellpadding="0">
+        <tbody>
+        <tr>
+          <td height="20">
+          </td>
+        </tr>
+        <tr>
+          <td align="center">
+            <table align="center" width="90%" border="0" cellspacing="0" cellpadding="0">
+              <!-- title -->
+
+              <tbody>
+              <tr>
+                <td data-link-style="text-decoration:none; color:#21b6ae;" data-link-color="Content Link"
+                    data-color="Headline" data-size="Headline" align="center"
+                    style="font-family: 'Open Sans', Arial, sans-serif; font-size:36px; color:#3b3b3b; font-weight: bold; letter-spacing:4px;"
+                    contenteditable="true" class="editable">
+                  <span id="current_time"></span>
+                </td>
+              </tr>
+              <!-- end title -->
+
+              <tr>
+                <td height="20">
+                </td>
+              </tr>
+              <!-- content -->
+
+              <tr>
+                <td data-link-style="text-decoration:none; color:#21b6ae;" data-link-color="Content Link"
+                    data-color="Main Text" data-size="Main Text" align="center"
+                    style="font-family: 'Open Sans', Arial, sans-serif; font-size:13px; color:#7f8c8d; line-height:30px;"
+                    contenteditable="false" class="editable">
+                  <div id="map" style="width:95%;min-height:180px;background-color: gainsboro">
+                    Finding your location...please wait
+                  </div>
+                </td>
+              </tr>
+              <!-- end content -->
+
+              </tbody>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td height="40">
+          </td>
+        </tr>
+        <!-- button -->
+
+        <tr>
+          <td align="center">
+            <table id="actionbar" class="hide" align="center" border="0" cellspacing="0" cellpadding="0">
+              <tbody>
+              <tr>
+                <td height="55" align="center"
+                    style="font-family: 'Open Sans', Arial, sans-serif; font-size:18px; font-weight: bold; padding-left: 25px; padding-right: 25px;"
+                    contenteditable="false" class="editable">
+                  <a href="javascript:submitActionWithLocation();"
+                     style="display: flex; flex-direction: row; justify-content: space-between; border-radius:30px; box-shadow: 0px 1px 0px #D4D2D2; color:#ffffff; text-decoration:none; background-color: #21b6ae;"
+                     data-color="Button Link">
+                    <img src="profile.png"
+                         alt="img"
+                         width="51"
+                         height="51"
+                         style="margin:2px;display:block;line-height:0;font-size:0;border:4px #21b6ae;border-radius:50px"
+                         data-crop="false">
+                    <span id="action" style="line-height:55px;padding-left:15px;padding-right:25px;text-transform: capitalize;">
+                      loading...
+                    </span>
+                  </a>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+        <!-- end button -->
+
+        <tr>
+          <td height="45">
+          </td>
+        </tr>
+        <!-- option -->
+
+        <tr>
+          <td data-bgcolor="Link BG" align="center" bgcolor="#f3f3f3"
+              style=" border-bottom-left-radius:4px; border-bottom-right-radius:4px;">
+            <table align="center" border="0" cellspacing="0" cellpadding="0">
+              <tbody>
+              <tr>
+                <td height="15">
+                </td>
+              </tr>
+              <tr>
+                <td data-link-style="text-decoration:none; color:#7f8c8d;" data-link-color="Text Link"
+                    data-color="Main Text" align="center"
+                    style="font-family: 'Open Sans', Arial, sans-serif; font-size:13px; color:#7f8c8d;">
+                  <span id="companyName">
+                    Mirage Sdn Bhd (767394-T)
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td height="15">
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+        <!-- end option -->
+
+        </tbody>
+      </table>
+    </td>
+  </tr>
+
+  <tr>
+    <td height="15">
+    </td>
+  </tr>
+  <!-- copyright -->
+
+  <tr>
+    <td data-link-style="text-decoration:none; color:#21b6ae;" data-link-color="Copyright Link" data-color="Copyright"
+        data-size="Copyright" align="center"
+        style="font-family: 'Open Sans', Arial, sans-serif; font-size:13px; color:#FFFFFF;">
+      <singleline>
+        &copy; 2017 SPEEDWAGE.COM. All Rights Reserved.
+      </singleline>
+    </td>
+  </tr>
+  <!-- end copyright -->
+  </tbody>
+</table>
+<script>
+
+  var mapElem = document.getElementById('map');
+  var baseUrl = new URL(document.URL);
+  var account = baseUrl.searchParams.get('account');
+  var member = baseUrl.searchParams.get('member');
+  var action = baseUrl.searchParams.get('action');
+  var actioned = false;
+
+  // load member info and event info
+  fetchMemberStatus();
+
+  // update current time for every second
+  var timer = setInterval(function () {
+    var current_time = document.getElementById("current_time");
+    if (current_time) {
+      var now = new Date();
+      var hours = now.getHours();
+      var minutes = now.getMinutes();
+      var seconds = now.getSeconds();
+      var ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      seconds = seconds < 10 ? '0' + seconds : seconds;
+      current_time.textContent = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
+    }
+  }, 1000);
+
+
+
+//  function loadMapApi(callback) {
+//    let gmap = document.createElement('script');
+//    gmap.src = 'https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyC1mz2IISLUCm5EmU6_0PoccmgWlC-EPXI&callback=' + callback;
+//    gmap.type = 'text/javascript';
+//    gmap.async = 'true';
+//    document.head.appendChild(gmap);
+//  }
+
+  // update current location
+//  function showPosition(position) {
+//    var here = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+//    var mapOptions = {
+//      center: here,
+//      zoom: 16,
+//      disableDefaultUI: true,
+//      scrollwheel: false
+//      //mapTypeId: google.maps.MapTypeId.HYBRID
+//    };
+//    var map = new google.maps.Map(mapElem, mapOptions);
+//    var marker = new google.maps.Marker({
+//      position: here,
+//      map: map
+//    });
+//    map.addListener('center_changed', function () {
+//      // 3 seconds after the center of the map has changed, pan back to the
+//      // marker.
+//      window.setTimeout(function () {
+//        map.panTo(marker.getPosition());
+//      }, 3000);
+//    });
+//
+//    // mongodb require [longitude, latitude]
+//    window.currentLocation = [position.coords.longitude, position.coords.latitude];
+//
+//  }
+
+  function generateMapImageUrl(position) {
+    var loc = position.coords.latitude + ',' + position.coords.longitude;
+    var locMarker = 'markers=color:red%7Clabel:S%7C' + loc;
+    var width = mapElem.clientWidth, height = Math.floor(width * 0.618);
+    var key = 'AIzaSyCjakZT4PPH8AtZlVvWWbF3XgaUCrolsU4';
+    return 'https://maps.googleapis.com/maps/api/staticmap?center=' + loc + '&zoom=16&size=' + width + 'x' + height + '&maptype=roadmap&' + locMarker + '&key=' + key
+  }
+
+  function showPositionImage(position) {
+    var img = document.createElement('img');
+    img.src = generateMapImageUrl(position);
+    mapElem.textContent = '';
+    mapElem.appendChild(img);
+    // mongodb require [longitude, latitude]
+    window.currentLocation = [position.coords.longitude, position.coords.latitude];
+    var actionbarElem = document.getElementById('actionbar');
+    actionbarElem.classList.remove('hide');
+  }
+
+  function fetchMemberStatus() {
+
+    var request = new Request('/api/event/' + account + '/' + member + '/status', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    fetch(request)
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (result) {
+        document.getElementById('companyName').textContent = result.result.account.displayName;
+        document.getElementById('action').textContent = action.replace('-', ' ');
+//        alert(JSON.stringify(result));
+      })
+      .catch (function (error) {
+        console.log('Request failed', error);
+      });
+
+  }
+
+  function submitActionWithLocation() {
+
+    // parse query string
+    if (!window.currentLocation) {
+      alert('location not found')
+      return;
+    }
+
+    if (actioned) {
+      window.close();
+      return;
+    }
+
+    actioned = true;
+    var request = new Request('/api/event/' + account + '/' + member + '/' + action, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ location: window.currentLocation })
+    });
+
+    fetch(request)
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (result) {
+        clearInterval(timer);
+        document.getElementById('current_time').classList.add('highlight');
+        document.getElementById('action').textContent = 'success';
+      })
+      .catch (function (error) {
+        actioned = false;
+        console.log('Request failed', error);
+      });
+
+  }
+
+  // load gMap if geolocation api is available to use
+  if (navigator.geolocation) {
+
+    // convert to promise
+    window.locationFetched = new Promise((resolve, reject) => {
+      // resolve this promise when window.onRecaptchaLoaded is been called
+      navigator.geolocation.getCurrentPosition(resolve, reject,{timeout:10000});
+    });
+
+    // convert to promise
+//    window.mapLoaded = new Promise((resolve, reject) => {
+//      // resolve this promise when window.onMapLoaded is been called
+//      window.onMapLoaded = resolve;
+//      try {
+//        loadMapApi('onMapLoaded');
+//      }
+//      catch (err) {
+//        reject(err);
+//      }
+//    });
+
+    Promise.all([
+      window.locationFetched,
+      // window.mapLoaded
+    ]).then(results => {
+      showPositionImage(results[0]);
+    }).catch(err => {
+      console.error('unable to locate', err);
+      mapElem.textContent = "Unable to get your current location";
+    });
+
+  }
+  else {
+    mapElem.textContent = "Unable to access Geolocation on your device.";
+  }
+
+</script>
+
+</body>
+</html>
